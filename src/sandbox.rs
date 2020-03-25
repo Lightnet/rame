@@ -7,10 +7,14 @@ use amethyst::{
   	ecs::prelude::{Component, DenseVecStorage, Entity},
   	prelude::*,
   	renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
-  	ui::{Anchor, TtfFormat, UiText, UiTransform},
+    ui::{Anchor, TtfFormat, UiText, UiTransform},
+    input::{is_close_requested, is_key_down, is_mouse_button_down},
+    ui::UiCreator,
+    winit::{MouseButton, VirtualKeyCode},
 };
 
 use amethyst::core::timing::Time;
+use crate::util::delete_hierarchy;
 
 pub const ARENA_HEIGHT: f32 = 800.0;
 pub const ARENA_WIDTH: f32 = 600.0;
@@ -20,26 +24,56 @@ pub const PADDLE_WIDTH: f32 = 4.0;
 
 #[derive(Default)]
 pub struct Sandbox {
-  	#[allow(dead_code)]
-  	ball_spawn_timer: Option<f32>,
-  	#[allow(dead_code)]
-  	sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+    #[allow(dead_code)]
+    ball_spawn_timer: Option<f32>,
+    #[allow(dead_code)]
+    sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+    ui_handle: Option<Entity>,
 }
 
 impl SimpleState for Sandbox {
   	// #![allow(dead_code)]
 	fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>) {
-    	let world = _data.world;
-		initialise_player(world);
+        let world = _data.world;
+        
+        self.ui_handle =
+            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/welcome.ron", ())));
 
-		initialise_camera(world);
-	}
+		initialise_player(world);
+        initialise_camera(world);
+        
+    }
+    fn handle_event(&mut self,_: StateData<'_, GameData<'_, '_>>,event: StateEvent,) -> SimpleTrans {
+        match &event {
+            StateEvent::Window(event) => {
+                if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
+                    //log::info!("[Trans::Quit] Quitting Application!");
+                    Trans::Quit
+                } else if is_mouse_button_down(&event, MouseButton::Left) {
+                    //log::info!("[Trans::Switch] Switching to MainMenu!");
+                    Trans::Switch(Box::new(crate::menu::MainMenu::default()))
+                    //Trans::None
+                } else {
+                    Trans::None
+                }
+            }
+            _ => Trans::None,
+        }
+    }
+
   	// #![allow(dead_code)]
 	fn update(&mut self, _data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
 		let _time = _data.world.fetch::<Time>();
 
   		Trans::None
-	}
+    }
+    
+    fn on_stop(&mut self, data: StateData<GameData>) {
+        if let Some(handler) = self.ui_handle {
+            delete_hierarchy(handler, data.world).expect("Failed to remove WelcomeScreen");
+        }
+        self.ui_handle = None;
+    }
 }
 
 fn initialise_camera(world: &mut World) {
@@ -57,6 +91,7 @@ fn initialise_camera(world: &mut World) {
 #[derive(PartialEq, Eq)]
 pub enum Side {
     Left,
+    #[allow(dead_code)]
     Right,
 }
 

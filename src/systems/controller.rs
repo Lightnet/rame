@@ -1,10 +1,13 @@
-use amethyst::core::{Transform, SystemDesc};
+//use amethyst::core::{Transform, SystemDesc};
+use amethyst::core::{Transform};
 use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
+//use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
+use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, WriteStorage};
 use amethyst::input::{InputHandler, StringBindings};
 
 // You'll have to mark PADDLE_HEIGHT as public in sandbox.rs
-use crate::sandbox::{Player, ARENA_HEIGHT, PADDLE_HEIGHT};
+//use crate::sandbox::{Player, ARENA_HEIGHT, PADDLE_HEIGHT};
+use crate::sandbox::{Player};
 
 #[derive(SystemDesc)]
 pub struct ControllerSystem;
@@ -17,11 +20,13 @@ impl<'s> System<'s> for ControllerSystem {
     );
 
     fn run(&mut self, (mut transforms, players, input): Self::SystemData) {
-        for (player, transform) in (&players, &mut transforms).join() {
+        for (_player, _transform) in (&players, &mut transforms).join() {
             let v = input.axis_value("y_axis");
             let h = input.axis_value("x_axis");
             
             println!("v: {:?} h: {:?}", v,h);
+
+
             /*
             let movement = match paddle.side {
                 Side::Left => input.axis_value("left_paddle"),
