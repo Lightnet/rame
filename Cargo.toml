@@ -1,0 +1,19 @@
+[package]
+name = "rame"
+version = "0.0.1"
+description = "amethyst"
+license = "CC0-1.0"
+authors = ["Lightnet <>"]
+repository = ""
+readme = "README.md"
+edition = "2018"
+
+[dependencies.amethyst]
+version = "0.15"
+features = ["vulkan"]
+
+[dependencies]
+
+#[[example]]
+#name = "demo_window"
+#path = "examples/demo_window.rs"

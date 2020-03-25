@@ -1,0 +1,10 @@
+/*!
+    @import /amethyst_window/src/config.rs#DisplayConfig
+    DisplayConfig
+*/
+
+(
+  title: "Windowing example",
+  icon: Some("assets/logo.png"),
+  dimensions: Some((800, 600)),
+)
