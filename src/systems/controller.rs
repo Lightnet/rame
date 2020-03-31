@@ -9,6 +9,7 @@ use amethyst::input::{InputHandler, StringBindings};
 //use crate::sandbox::{Player, ARENA_HEIGHT, PADDLE_HEIGHT};
 use crate::sandbox::{Player};
 
+//https://book.amethyst.rs/stable/input/handling_input.html
 #[derive(SystemDesc)]
 pub struct ControllerSystem;
 
@@ -26,6 +27,11 @@ impl<'s> System<'s> for ControllerSystem {
             
             println!("v: {:?} h: {:?}", v,h);
 
+            let shoot = input.action_is_down("shoot").unwrap_or(false);
+
+            if shoot {
+                _player.shoot();
+            }
 
             /*
             let movement = match paddle.side {

@@ -97,6 +97,7 @@ pub enum Side {
 
 //#[derive(Default)]
 pub struct Player {
+    pub id: usize,
 	pub side: Side,
     pub width: f32,
     pub height: f32,
@@ -105,10 +106,17 @@ pub struct Player {
 impl Player {
     fn new(side: Side) -> Player {
         Player {
+            id: 0,
             side,
             width: PADDLE_WIDTH,
             height: PADDLE_HEIGHT,
         }
+    }
+}
+
+impl Player {
+    pub fn shoot(&self) {
+        println!("PEW! {}", self.id);
     }
 }
 

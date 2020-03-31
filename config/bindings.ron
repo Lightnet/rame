@@ -14,6 +14,6 @@
     "x_axis": Emulated(pos: Key(A), neg: Key(D)),
   },
   actions: {
-    
+    "shoot": [[Key(Space)]],
   },
 )
