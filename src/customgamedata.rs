@@ -1,47 +1,69 @@
-#[allow(unused_imports)]
+
+
+use std::marker::PhantomData;
+
+
 use amethyst::{
-    //assets::HotReloadBundle,
     input::{is_close_requested, is_key_down},
     prelude::*,
-    //utils::application_root_dir,
-    //core::transform::TransformBundle,
-    //renderer::{
-        //plugins::{RenderFlat2D, RenderToWindow},
-        //types::DefaultBackend,
-        //RenderingBundle,
-    //},
-    ecs::{System, SystemData, World, Dispatcher, DispatcherBuilder, WorldExt},
+    utils::application_root_dir,
+    core::transform::TransformBundle,
+    renderer::{
+        plugins::{RenderFlat2D, RenderToWindow},
+        types::DefaultBackend,
+        RenderingBundle,
+    },
+    ecs::{System, World, Dispatcher, DispatcherBuilder, WorldExt},
     error::Error,
     winit::VirtualKeyCode,
 };
+use amethyst::input::{InputBundle, StringBindings};
+use amethyst::ui::{RenderUi, UiBundle};
 use amethyst::DataDispose;
 use amethyst::core::SystemBundle;
 use amethyst::core::ArcThreadPool;
 
+
+
+
 pub struct CustomGameData<'a, 'b> {
-    core_dispatcher: Option<Dispatcher<'a, 'b>>,
-    running_dispatcher: Option<Dispatcher<'a, 'b>>,
+    pub base: Option<Dispatcher<'a, 'b>>,
+    pub running: Option<Dispatcher<'a, 'b>>,
 }
 
 impl<'a, 'b> CustomGameData<'a, 'b> {
     /// Update game data
-    #[allow(dead_code)]
     pub fn update(&mut self, world: &World, running: bool) {
         if running {
-            if let Some(dispatcher) = self.running_dispatcher.as_mut() {
-                dispatcher.dispatch(&world);
+            if let Some(running) = &mut self.running {
+                running.dispatch(&world);
             }
         }
-        if let Some(dispatcher) = self.core_dispatcher.as_mut() {
-            dispatcher.dispatch(&world);
+        if let Some(base) = &mut self.base {
+            base.dispatch(&world);
+        }
+    }
+
+    /// Dispose game data, dropping the dispatcher
+    pub fn dispose(&mut self, world: &mut World) {
+        if let Some(base) = self.base.take() {
+            base.dispose(world);
+        }
+        if let Some(running) = self.running.take() {
+            running.dispose(world);
         }
     }
 }
 
+impl DataDispose for CustomGameData<'_, '_> {
+    fn dispose(&mut self, world: &mut World) {
+        self.dispose(world);
+    }
+}
 
 pub struct CustomGameDataBuilder<'a, 'b> {
-    pub core: DispatcherBuilder<'a, 'b>,
-    pub running: DispatcherBuilder<'a, 'b>,
+    base_dispatcher_operations: Vec<Box<dyn DispatcherOperation<'a, 'b>>>,
+    running_dispatcher_operations: Vec<Box<dyn DispatcherOperation<'a, 'b>>>,
 }
 
 impl<'a, 'b> Default for CustomGameDataBuilder<'a, 'b> {
@@ -53,55 +75,146 @@ impl<'a, 'b> Default for CustomGameDataBuilder<'a, 'b> {
 impl<'a, 'b> CustomGameDataBuilder<'a, 'b> {
     pub fn new() -> Self {
         CustomGameDataBuilder {
-            core: DispatcherBuilder::new(),
-            running: DispatcherBuilder::new(),
+            base_dispatcher_operations: vec![],
+            running_dispatcher_operations: vec![],
         }
     }
-    #[allow(dead_code)]
-    pub fn with_base_bundle<B>(mut self, world: &mut World, bundle: B) -> Result<Self, Error>
+
+    pub fn with_base<SD, S>(
+        mut self,
+        system_desc: SD,
+        name: &'static str,
+        dependencies: &'static [&'static str],
+    ) -> Self
     where
-        B: SystemBundle<'a, 'b>,
+        SD: SystemDesc<'a, 'b, S> + 'static,
+        S: for<'c> System<'c> + 'static + Send,
     {
-        bundle.build(world, &mut self.core)?;
-        Ok(self)
+        let dispatcher_operation = Box::new(AddSystem {
+            system_desc,
+            name,
+            dependencies,
+            marker: PhantomData::<S>,
+        }) as Box<dyn DispatcherOperation<'a, 'b> + 'static>;
+        self.base_dispatcher_operations.push(dispatcher_operation);
+        self
     }
 
-    #[allow(dead_code)]
-    pub fn with_running<S>(mut self, system: S, name: &str, dependencies: &[&str]) -> Self
+    pub fn with_base_bundle<B>(mut self, bundle: B) -> Self
     where
-        for<'c> S: System<'c> + Send + 'a,
+        B: SystemBundle<'a, 'b> + 'static,
     {
-        self.running.add(system, name, dependencies);
+        self.base_dispatcher_operations
+            .push(Box::new(AddBundle { bundle }));
+        self
+    }
+
+    pub fn with_running<SD, S>(
+        mut self,
+        system_desc: SD,
+        name: &'static str,
+        dependencies: &'static [&'static str],
+    ) -> Self
+    where
+        SD: SystemDesc<'a, 'b, S> + 'static,
+        S: for<'c> System<'c> + 'static + Send,
+    {
+        let dispatcher_operation = Box::new(AddSystem {
+            system_desc,
+            name,
+            dependencies,
+            marker: PhantomData::<S>,
+        }) as Box<dyn DispatcherOperation<'a, 'b> + 'static>;
+        self.running_dispatcher_operations
+            .push(dispatcher_operation);
         self
     }
 }
 
 impl<'a, 'b> DataInit<CustomGameData<'a, 'b>> for CustomGameDataBuilder<'a, 'b> {
     fn build(self, world: &mut World) -> CustomGameData<'a, 'b> {
-        // Get a handle to the `ThreadPool`.
-        let pool = (*world.read_resource::<ArcThreadPool>()).clone();
+        let base = build_dispatcher(world, self.base_dispatcher_operations);
+        let running = build_dispatcher(world, self.running_dispatcher_operations);
 
-        let mut core_dispatcher = self.core.with_pool(pool.clone()).build();
-        let mut running_dispatcher = self.running.with_pool(pool.clone()).build();
-        core_dispatcher.setup(world);
-        running_dispatcher.setup(world);
-
-        let core_dispatcher = Some(core_dispatcher);
-        let running_dispatcher = Some(running_dispatcher);
-
-        CustomGameData { core_dispatcher, running_dispatcher }
+        CustomGameData {
+            base: Some(base),
+            running: Some(running),
+        }
     }
 }
 
-impl<'a,'b> DataDispose for CustomGameData<'a,'b> {
-    // We dispose each dispatcher owned by the `CustomGameData` structure.
-    fn dispose(&mut self, world: &mut World) {
-        if let Some(dispatcher) = self.core_dispatcher.take() {
-            dispatcher.dispose(world);
-        }
-        if let Some(dispatcher) = self.running_dispatcher.take() {
-            dispatcher.dispose(world);
-        }
+fn build_dispatcher<'a, 'b>(
+    world: &mut World,
+    dispatcher_operations: Vec<Box<dyn DispatcherOperation<'a, 'b>>>,
+) -> Dispatcher<'a, 'b> {
+    let mut dispatcher_builder = DispatcherBuilder::new();
+
+    #[cfg(not(no_threading))]
+    {
+        let pool = world.read_resource::<ArcThreadPool>().clone();
+        dispatcher_builder = dispatcher_builder.with_pool((*pool).clone());
+    }
+
+    dispatcher_operations
+        .into_iter()
+        .try_for_each(|dispatcher_operation| {
+            dispatcher_operation.exec(world, &mut dispatcher_builder)
+        })
+        .unwrap_or_else(|e| panic!("Failed to set up dispatcher: {}", e));
+
+    let mut dispatcher = dispatcher_builder.build();
+    dispatcher.setup(world);
+    dispatcher
+}
+
+/// Trait to capture deferred dispatcher builder operations.
+trait DispatcherOperation<'a, 'b> {
+    /// Executes the dispatcher builder instruction.
+    fn exec(
+        self: Box<Self>,
+        world: &mut World,
+        dispatcher_builder: &mut DispatcherBuilder<'a, 'b>,
+    ) -> Result<(), Error>;
+}
+
+struct AddSystem<SD, S> {
+    system_desc: SD,
+    name: &'static str,
+    dependencies: &'static [&'static str],
+    marker: PhantomData<S>,
+}
+
+impl<'a, 'b, SD, S> DispatcherOperation<'a, 'b> for AddSystem<SD, S>
+where
+    SD: SystemDesc<'a, 'b, S>,
+    S: for<'s> System<'s> + Send + 'a,
+{
+    fn exec(
+        self: Box<Self>,
+        world: &mut World,
+        dispatcher_builder: &mut DispatcherBuilder<'a, 'b>,
+    ) -> Result<(), Error> {
+        let system = self.system_desc.build(world);
+        dispatcher_builder.add(system, self.name, self.dependencies);
+        Ok(())
+    }
+}
+
+struct AddBundle<B> {
+    bundle: B,
+}
+
+impl<'a, 'b, B> DispatcherOperation<'a, 'b> for AddBundle<B>
+where
+    B: SystemBundle<'a, 'b>,
+{
+    fn exec(
+        self: Box<Self>,
+        world: &mut World,
+        dispatcher_builder: &mut DispatcherBuilder<'a, 'b>,
+    ) -> Result<(), Error> {
+        self.bundle.build(world, dispatcher_builder)?;
+        Ok(())
     }
 }
 
@@ -156,6 +269,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         _: StateData<CustomGameData>,
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+        /*
         if let StateEvent::Window(event) = &event {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
                 Trans::Quit
@@ -167,10 +281,54 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         } else {
             Trans::None
         }
+        */
+        Trans::None
     }
 
     fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
         data.data.update(&data.world, true); // true to say we should dispatch running
         Trans::None
     }
+}
+
+fn main() -> amethyst::Result<()> {
+    amethyst::start_logger(Default::default());
+    // this will be the directory the 'Cargo.toml' is defined in.
+    let app_root = application_root_dir()?;
+    // our display config is in our configs folder.
+    let display_config_path = app_root.join("config/display.ron");
+
+    let binding_path = app_root.join("config").join("bindings.ron");
+    #[allow(unused_variables)]
+    let input_bundle = InputBundle::<StringBindings>::new()
+    .with_bindings_from_file(binding_path)?;
+    // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
+    let assets_dir = app_root.join("assets/");
+
+    let mut world = World::new();
+    let game_data = CustomGameDataBuilder::default()
+        //.with_running(ExampleSystem, "example_system", &[])
+        .with_base_bundle( TransformBundle::new())
+        .with_base_bundle( input_bundle)
+        .with_base_bundle( UiBundle::<StringBindings>::new())
+        .with_base_bundle(
+            RenderingBundle::<DefaultBackend>::new()
+                // The RenderToWindow plugin provides all the scaffolding for opening a window and
+                // drawing on it
+                .with_plugin(
+                    RenderToWindow::from_config_path(display_config_path)?
+                        .with_clear([0.34, 0.36, 0.52, 1.0]),
+                )
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderUi::default()),
+        );
+        
+        
+        
+        
+
+    let mut game = Application::new(assets_dir, Main, game_data)?;
+    game.run();
+
+    Ok(())
 }
