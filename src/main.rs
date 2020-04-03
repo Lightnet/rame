@@ -70,6 +70,8 @@ fn main() -> amethyst::Result<()> {
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
     let assets_dir = app_root.join("assets/");
+
+    
     /*
     let mut world = World::new();
     let game_data = CustomGameDataBuilder::default()

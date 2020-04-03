@@ -10,6 +10,14 @@
 # Design:
 	In hope to design an API and easy to understand build. To used .ron files for menu, entity object, and other things. It depend on the design of the code layout and structure.
 
+# Examples:
+```
+cargo run --example main_customgamedata //not working
+cargo run --example main_examplestate // working
+cargo run --example main_simple // working
+```
+
+
 # Links:
  * https://github.com/amethyst/amethyst
  * https://github.com/amethyst/amethyst/tree/master/examples/custom_game_data

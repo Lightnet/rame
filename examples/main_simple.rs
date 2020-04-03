@@ -1,3 +1,8 @@
+/*
+    run headless
+*/
+
+
 use amethyst::prelude::*;
 use amethyst::winit::{Event, KeyboardInput, VirtualKeyCode, WindowEvent};
 
@@ -9,7 +14,8 @@ impl SimpleState for GameState {
     }
 
     fn handle_event(&mut self, _: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans {
-        if let StateEvent::Window(event) = &event {
+        /*
+        if let StateEvent::Window(event) = &event {  
             match event {
                  Event::WindowEvent { event, .. } => match event {
                     WindowEvent::KeyboardInput {
@@ -20,18 +26,24 @@ impl SimpleState for GameState {
                 },
                 _ => Trans::None,
             }
+            
         } else {
             Trans::None
         }
+        */
+        Trans::None
     }
 
     fn update(&mut self, _: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         println!("Computing some more whoop-ass...");
         Trans::Quit
+        //Trans::None
     }
 }
 
 fn main() -> amethyst::Result<()> {
+    amethyst::start_logger(Default::default());
+
     let assets_dir = "assets/";
     let mut game = Application::new(assets_dir, GameState, GameDataBuilder::default())?;
     game.run();

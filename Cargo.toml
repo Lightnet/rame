@@ -17,3 +17,15 @@ features = ["vulkan"]
 #[[example]]
 #name = "demo_window"
 #path = "examples/demo_window.rs"
+
+[[example]]
+name = "main_customgamedata"
+path = "examples/main_customgamedata.rs"
+
+[[example]]
+name = "main_examplestate"
+path = "examples/main_examplestate.rs"
+
+[[example]]
+name = "main_simple"
+path = "examples/main_simple.rs"
