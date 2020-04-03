@@ -1,4 +1,12 @@
 
+/*
+    Project Name: Rame
+    Created by: Lightnet
+    License: MIT
+    Information: run window
+*/
+
+
 extern crate amethyst;
 
 use amethyst::{

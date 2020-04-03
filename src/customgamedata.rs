@@ -1,7 +1,11 @@
 
+/*
+    work in progress test.
+    
+*/
+
 
 use std::marker::PhantomData;
-
 
 use amethyst::{
     input::{is_close_requested, is_key_down},
@@ -224,6 +228,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
     fn on_start(&mut self, 
         #[allow(unused_variables)]
         data: StateData<CustomGameData>) {
+        println!("pause menu");
         //create_paused_ui(data.world);
     }
 
@@ -238,6 +243,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
                 Trans::Quit
             } else if is_key_down(&event, VirtualKeyCode::Space) {
                 //delete_paused_ui(data.world);
+                println!("return");
                 Trans::Pop
             } else {
                 Trans::None
@@ -260,7 +266,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         #[allow(unused_variables)]
         data: StateData<CustomGameData>) 
     {
-        
+
         println!("init main...");
         //initialise(data.world);
     }

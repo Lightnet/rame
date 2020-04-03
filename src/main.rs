@@ -1,9 +1,13 @@
 /*
-    Proejct Name: RAME
+    Proejct Name: Rame
     Rust
     Amethyst
     Module
     Engine
+
+    Created by: Lightnet
+
+    License: MIT
 
     Information:
         Work in progress prototype build.

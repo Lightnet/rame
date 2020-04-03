@@ -1,3 +1,13 @@
+/*
+    Project Name: Rame
+    Created by: Lightnet
+    License: MIT
+    Information: work in progress test.
+
+*/
+
+
+
 use amethyst::{
   ecs::prelude::Entity,
   //input::{is_close_requested, is_key_down},

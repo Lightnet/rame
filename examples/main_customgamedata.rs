@@ -1,3 +1,10 @@
+/*
+    Project Name: Rame
+    Created by: Lightnet
+    License: MIT
+    Information: custom game data
+*/
+
 use std::marker::PhantomData;
 
 #[allow(unused_imports)]

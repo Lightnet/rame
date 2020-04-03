@@ -1,3 +1,11 @@
+/*
+    Project Name: Rame
+    Created by: Lightnet
+    License: MIT
+    Information: work in progress test.
+
+*/
+
 //use amethyst::core::{Transform, SystemDesc};
 use amethyst::core::{Transform};
 use amethyst::derive::SystemDesc;
