@@ -22,10 +22,10 @@ impl<'s> System<'s> for ControllerSystem {
 
     fn run(&mut self, (mut transforms, players, input): Self::SystemData) {
         for (_player, _transform) in (&players, &mut transforms).join() {
-            let v = input.axis_value("y_axis");
-            let h = input.axis_value("x_axis");
+            //let v = input.axis_value("y_axis");
+            //let h = input.axis_value("x_axis");
             
-            println!("v: {:?} h: {:?}", v,h);
+            //println!("v: {:?} h: {:?}", v,h);
 
             let shoot = input.action_is_down("shoot").unwrap_or(false);
 

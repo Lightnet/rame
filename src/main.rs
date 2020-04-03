@@ -11,14 +11,14 @@
         working on the module setup.
         
 */
-
+//#[allow(unused_imports)]
 // #[allow(clippy::type_complexity, dead_code)]
 //#[allow(dead_code)]
 extern crate amethyst;
-//#[allow(unused_imports)]
+#[allow(unused_imports)]
 use amethyst::{
     assets::HotReloadBundle,
-    //input::is_key_down,
+    input::is_key_down,
     prelude::*,
     utils::application_root_dir,
     core::transform::TransformBundle,
@@ -29,109 +29,32 @@ use amethyst::{
     },
     ecs::{System, SystemData, World, Dispatcher, DispatcherBuilder, WorldExt},
     error::Error,
-    //winit::VirtualKeyCode,
+    winit::VirtualKeyCode,
 };
+#[allow(unused_imports)]
 use amethyst::input::{InputBundle, StringBindings};
+#[allow(unused_imports)]
 use amethyst::ui::{RenderUi, UiBundle};
-use amethyst::core::ArcThreadPool;
+//use amethyst::core::ArcThreadPool;
 //use amethyst::shred::DispatcherBuilder;
 //use amethyst::ecs::prelude::Dispatcher;
 //use amethyst::Error;
+#[allow(unused_imports)]
 use amethyst::DataDispose;
+#[allow(unused_imports)]
 use amethyst::core::SystemBundle;
 
-
 mod sandbox;
+mod customgamedata;
+
+#[allow(unused_imports)]
 use crate::sandbox::Sandbox;
+#[allow(unused_imports)]
+use crate::customgamedata::*;
 
 mod systems; // Import the module
 mod menu;
 mod util;
-
-pub struct CustomGameData<'a, 'b> {
-    core_dispatcher: Option<Dispatcher<'a, 'b>>,
-    running_dispatcher: Option<Dispatcher<'a, 'b>>,
-}
-
-impl<'a, 'b> CustomGameData<'a, 'b> {
-    /// Update game data
-    pub fn update(&mut self, world: &World, running: bool) {
-        if running {
-            if let Some(dispatcher) = self.running_dispatcher.as_mut() {
-                dispatcher.dispatch(&world);
-            }
-        }
-        if let Some(dispatcher) = self.core_dispatcher.as_mut() {
-            dispatcher.dispatch(&world);
-        }
-    }
-}
-
-
-pub struct CustomGameDataBuilder<'a, 'b> {
-    pub core: DispatcherBuilder<'a, 'b>,
-    pub running: DispatcherBuilder<'a, 'b>,
-}
-
-impl<'a, 'b> Default for CustomGameDataBuilder<'a, 'b> {
-    fn default() -> Self {
-        CustomGameDataBuilder::new()
-    }
-}
-
-impl<'a, 'b> CustomGameDataBuilder<'a, 'b> {
-    pub fn new() -> Self {
-        CustomGameDataBuilder {
-            core: DispatcherBuilder::new(),
-            running: DispatcherBuilder::new(),
-        }
-    }
-
-    pub fn with_base_bundle<B>(mut self, world: &mut World, bundle: B) -> Result<Self, Error>
-    where
-        B: SystemBundle<'a, 'b>,
-    {
-        bundle.build(world, &mut self.core)?;
-        Ok(self)
-    }
-
-    pub fn with_running<S>(mut self, system: S, name: &str, dependencies: &[&str]) -> Self
-    where
-        for<'c> S: System<'c> + Send + 'a,
-    {
-        self.running.add(system, name, dependencies);
-        self
-    }
-}
-
-impl<'a, 'b> DataInit<CustomGameData<'a, 'b>> for CustomGameDataBuilder<'a, 'b> {
-    fn build(self, world: &mut World) -> CustomGameData<'a, 'b> {
-        // Get a handle to the `ThreadPool`.
-        let pool = (*world.read_resource::<ArcThreadPool>()).clone();
-
-        let mut core_dispatcher = self.core.with_pool(pool.clone()).build();
-        let mut running_dispatcher = self.running.with_pool(pool.clone()).build();
-        core_dispatcher.setup(world);
-        running_dispatcher.setup(world);
-
-        let core_dispatcher = Some(core_dispatcher);
-        let running_dispatcher = Some(running_dispatcher);
-
-        CustomGameData { core_dispatcher, running_dispatcher }
-    }
-}
-
-impl<'a,'b> DataDispose for CustomGameData<'a,'b> {
-    // We dispose each dispatcher owned by the `CustomGameData` structure.
-    fn dispose(&mut self, world: &mut World) {
-        if let Some(dispatcher) = self.core_dispatcher.take() {
-            dispatcher.dispose(world);
-        }
-        if let Some(dispatcher) = self.running_dispatcher.take() {
-            dispatcher.dispose(world);
-        }
-    }
-}
 
 
 fn main() -> amethyst::Result<()> {
@@ -142,12 +65,43 @@ fn main() -> amethyst::Result<()> {
     let display_config_path = app_root.join("config/display.ron");
 
     let binding_path = app_root.join("config").join("bindings.ron");
+    #[allow(unused_variables)]
     let input_bundle = InputBundle::<StringBindings>::new()
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
     let assets_dir = app_root.join("assets/");
-
+    /*
     let mut world = World::new();
+    let game_data = CustomGameDataBuilder::default()
+        //.with_running(ExampleSystem, "example_system", &[])
+        .with_base_bundle(
+            &mut world,
+            RenderingBundle::<DefaultBackend>::new()
+                // The RenderToWindow plugin provides all the scaffolding for opening a window and
+                // drawing on it
+                .with_plugin(
+                    RenderToWindow::from_config_path(display_config_path)?
+                        .with_clear([0.34, 0.36, 0.52, 1.0]),
+                )
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderUi::default()),
+        )?
+        .with_base_bundle(&mut world, TransformBundle::new())?;
+        //.with_base_bundle(&mut world, UiBundle::<StringBindings>::new())?;
+        //.with_base_bundle(
+            //&mut world,
+            //input_bundle,
+        //)?;
+
+    let mut game = Application::new(assets_dir, Main, game_data)?;
+    game.run();
+    */
+
+    //let mut world = World::new();
+    //let game_data = GameDataBuilder::default();
+    //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
+    //game.run();
+    
     let game_data = GameDataBuilder::default()
     //let game_data = CustomGameDataBuilder::default()
         //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
@@ -180,6 +134,7 @@ fn main() -> amethyst::Result<()> {
     let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
     //log::info!("Starting game!");
     game.run();
+    
 
     Ok(())
 }
