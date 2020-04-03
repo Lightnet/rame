@@ -1,9 +1,10 @@
 use amethyst::{
   ecs::prelude::Entity,
-  input::{is_close_requested, is_key_down},
+  //input::{is_close_requested, is_key_down},
   prelude::*,
-  ui::{UiCreator, UiEvent, UiEventType, UiFinder},
-  winit::VirtualKeyCode,
+  ui::{UiCreator, UiFinder},
+  //ui::{UiCreator, UiEvent, UiEventType, UiFinder},
+  //winit::VirtualKeyCode,
 };
 
 //use crate::{credits::CreditsScreen, game::Game, util::delete_hierarchy, welcome::WelcomeScreen};
@@ -54,7 +55,7 @@ impl SimpleState for MainMenu {
         Trans::None
     }
 
-    fn handle_event(&mut self,_: StateData<'_, GameData<'_, '_>>, event: StateEvent, ) -> SimpleTrans {
+    fn handle_event(&mut self,_: StateData<'_, GameData<'_, '_>>, _event: StateEvent, ) -> SimpleTrans {
         /*
         match event {
             StateEvent::Window(event) => {

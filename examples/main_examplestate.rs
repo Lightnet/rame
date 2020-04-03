@@ -1,11 +1,4 @@
-/*
 
-*/
-/*
-fn main(){
-    println!("hello world");
-}
-*/
 extern crate amethyst;
 
 use amethyst::{

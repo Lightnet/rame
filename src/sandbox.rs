@@ -43,7 +43,8 @@ impl SimpleState for Sandbox {
         initialise_camera(world);
         
     }
-    fn handle_event(&mut self,_: StateData<'_, GameData<'_, '_>>,event: StateEvent,) -> SimpleTrans {
+    
+    fn handle_event(&mut self, _: StateData<'_, GameData<'_, '_>>, event: StateEvent,) -> SimpleTrans {
         match &event {
             StateEvent::Window(event) => {
                 if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
@@ -166,4 +167,38 @@ fn initialise_player(world: &mut World) {
 		//.with(Paddle::new(Side::Right))
 		//.with(right_transform)
 		//.build();
-  }
+}
+
+
+/*
+fn init_camera00( world: &mut World){
+    let mut transform = Transform::default();
+    transform.set_translation_z(1.0);
+    world
+        .create_entity()
+        .with(Camera::from(Projection::orthographic(
+                -250.0,250.0,-250.0,250.0,
+        )))
+        .with(transform)
+        .build();
+}
+*/
+/*
+fn init_sprite(world: &mut World, tex: &TextureHandle) -> Entity {
+    let mut transform = Transform::default();
+    transform.set_translation_x(0.0);
+    transform.set_translation_y(0.0);
+    world
+        .create_entity()
+        .with(transform)
+        .with(tex)
+        .build()
+}
+
+
+fn load_text(world: &mut World, png_path: &str) -> TextureHandle{
+    let loader = world.read_resource::<Loader>();
+    let storage = world.read_resource::<AssetStorage<Texture>>();
+    //loader.load(png_path, PngFormat, TextureMetadata::srgb_scale(), (), &storage)
+}
+*/
