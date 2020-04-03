@@ -12,7 +12,7 @@
 
 # Examples:
 ```
-cargo run --example main_customgamedata //not working
+cargo run --example main_customgamedata // working
 cargo run --example main_examplestate // working
 cargo run --example main_simple // working
 ```
