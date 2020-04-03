@@ -6,24 +6,22 @@ use std::marker::PhantomData;
 use amethyst::{
     input::{is_close_requested, is_key_down},
     prelude::*,
-    utils::application_root_dir,
-    core::transform::TransformBundle,
-    renderer::{
-        plugins::{RenderFlat2D, RenderToWindow},
-        types::DefaultBackend,
-        RenderingBundle,
-    },
+    //utils::application_root_dir,
+    //core::transform::TransformBundle,
+    //renderer::{
+        //plugins::{RenderFlat2D, RenderToWindow},
+        //types::DefaultBackend,
+        //RenderingBundle,
+    //},
     ecs::{System, World, Dispatcher, DispatcherBuilder, WorldExt},
     error::Error,
     winit::VirtualKeyCode,
 };
-use amethyst::input::{InputBundle, StringBindings};
-use amethyst::ui::{RenderUi, UiBundle};
+//use amethyst::input::{InputBundle, StringBindings};
+//use amethyst::ui::{RenderUi, UiBundle};
 use amethyst::DataDispose;
 use amethyst::core::SystemBundle;
 use amethyst::core::ArcThreadPool;
-
-
 
 
 pub struct CustomGameData<'a, 'b> {
@@ -108,7 +106,7 @@ impl<'a, 'b> CustomGameDataBuilder<'a, 'b> {
             .push(Box::new(AddBundle { bundle }));
         self
     }
-
+    #[allow(dead_code)]
     pub fn with_running<SD, S>(
         mut self,
         system_desc: SD,
@@ -260,7 +258,10 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
     #[allow(dead_code)]
     fn on_start(&mut self,
         #[allow(unused_variables)]
-        data: StateData<CustomGameData>) {
+        data: StateData<CustomGameData>) 
+    {
+        
+        println!("init main...");
         //initialise(data.world);
     }
 
@@ -269,20 +270,23 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         _: StateData<CustomGameData>,
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
-        /*
+        
         if let StateEvent::Window(event) = &event {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
+                println!("quit");
                 Trans::Quit
             } else if is_key_down(&event, VirtualKeyCode::Space) {
+                println!("Paused");
                 Trans::Push(Box::new(Paused))
             } else {
+                //println!("...");
                 Trans::None
             }
         } else {
             Trans::None
         }
-        */
-        Trans::None
+        
+        //Trans::None
     }
 
     fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
@@ -291,6 +295,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
     }
 }
 
+/*
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
     // this will be the directory the 'Cargo.toml' is defined in.
@@ -322,13 +327,10 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default())
                 .with_plugin(RenderUi::default()),
         );
-        
-        
-        
-        
 
     let mut game = Application::new(assets_dir, Main, game_data)?;
     game.run();
 
     Ok(())
 }
+*/

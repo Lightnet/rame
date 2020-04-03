@@ -34,8 +34,8 @@ use amethyst::{
     DataDispose, DataInit,
 };
 //use amethyst::DataDispose;
-use amethyst::core::SystemBundle;
-use amethyst::core::ArcThreadPool;
+//use amethyst::core::SystemBundle;
+//use amethyst::core::ArcThreadPool;
 use amethyst::input::{InputBundle, StringBindings};
 #[allow(unused_imports)]
 use amethyst::ui::{RenderUi, UiBundle};
@@ -52,7 +52,7 @@ mod systems; // Import the module
 mod menu;
 mod util;
 
-
+/*
 pub struct Main;
 pub struct Paused;
 
@@ -85,6 +85,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
     }
 
     fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+        println!("pause");
         data.data.update(&data.world, false); // false to say we should not dispatch running
         Trans::None
     }
@@ -102,6 +103,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
     fn handle_event(
         &mut self,
         _: StateData<CustomGameData>,
+        #[allow(unused_variables)]
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
         /*
@@ -125,7 +127,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         Trans::None
     }
 }
-
+*/
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -141,33 +143,6 @@ fn main() -> amethyst::Result<()> {
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
     let assets_dir = app_root.join("assets/");
 
-    
-    /*
-    let mut world = World::new();
-    let game_data = CustomGameDataBuilder::default()
-        //.with_running(ExampleSystem, "example_system", &[])
-        .with_base_bundle(
-            &mut world,
-            RenderingBundle::<DefaultBackend>::new()
-                // The RenderToWindow plugin provides all the scaffolding for opening a window and
-                // drawing on it
-                .with_plugin(
-                    RenderToWindow::from_config_path(display_config_path)?
-                        .with_clear([0.34, 0.36, 0.52, 1.0]),
-                )
-                .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderUi::default()),
-        )?
-        .with_base_bundle(&mut world, TransformBundle::new())?;
-        //.with_base_bundle(&mut world, UiBundle::<StringBindings>::new())?;
-        //.with_base_bundle(
-            //&mut world,
-            //input_bundle,
-        //)?;
-
-    let mut game = Application::new(assets_dir, Main, game_data)?;
-    game.run();
-    */
 
     //let mut world = World::new();
     //let game_data = GameDataBuilder::default();
