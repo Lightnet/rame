@@ -24,7 +24,7 @@ Container(
 
                 Button(
                     transform: (
-                        id: "start",
+                        id: "host",
                         width: 128.,
                         height: 32.,
                         tab_order: 1,
@@ -59,7 +59,7 @@ Container(
                 // Complex Button
                 Button(
                     transform: (
-                        id: "load",
+                        id: "client",
                         width: 128.,
                         height: 32.,
                         tab_order: 3,
@@ -94,7 +94,7 @@ Container(
                 // Complex Button
                 Button(
                     transform: (
-                        id: "options",
+                        id: "hsend",
                         width: 128.,
                         height: 32.,
                         tab_order: 3,
@@ -129,7 +129,7 @@ Container(
                 // Complex Button
                 Button(
                     transform: (
-                        id: "credits",
+                        id: "csend",
                         width: 128.,
                         height: 32.,
                         tab_order: 3,

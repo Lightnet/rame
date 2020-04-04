@@ -39,3 +39,32 @@ let game_data = CustomGameDataBuilder::default()
 # Notes:
  * This some what I understand.
  * Not in depth on loading objects.
+
+
+To access to custom data
+
+ ```rust
+impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for ExampleState {
+
+    fn on_start(&mut self, data: StateData<CustomGameData>) {
+        let world = data.world;
+        let customgamedata = data.data; //CustomGameData
+        println!("Networking menu");
+    }
+
+    fn handle_event(&mut self, data: StateData<CustomGameData>, event: StateEvent,) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+
+        Trans::None //return value
+    }
+
+    fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+
+        Trans::None
+    }
+
+    fn on_stop(&mut self, data: StateData<CustomGameData>) {
+        //clean up
+    }
+
+}
+ ```

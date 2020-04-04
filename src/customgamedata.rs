@@ -1,7 +1,16 @@
-
 /*
-    work in progress test.
-    
+    Proejct Name: Rame
+    Rust
+    Amethyst
+    Module
+    Engine
+
+    Created by: Lightnet
+
+    License: MIT
+
+    Information:
+        Work in progress prototype build.  
 */
 
 
@@ -61,6 +70,11 @@ impl<'a, 'b> CustomGameData<'a, 'b> {
             running.dispose(world);
         }
     }
+
+    pub fn test(&mut self){
+        println!("test CustomGameData");
+    }
+    
 }
 
 impl DataDispose for CustomGameData<'_, '_> {
@@ -86,6 +100,10 @@ impl<'a, 'b> CustomGameDataBuilder<'a, 'b> {
             base_dispatcher_operations: vec![],
             running_dispatcher_operations: vec![],
         }
+    }
+
+    pub fn test(&mut self){
+        println!("test CustomGameDataBuilder");
     }
 
     pub fn with_base<SD, S>(

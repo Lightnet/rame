@@ -37,4 +37,5 @@ cargo run --example main_simple // working
  * https://github.com/amethyst/amethyst/tree/master/examples/custom_game_data
  * https://book.amethyst.rs/stable/controlling_system_execution/custom_game_data.html
  * https://github.com/Gekkio/imgui-rs
+ * https://github.com/amethyst/amethyst/blob/master/examples/states_ui/menu.rs
  * 

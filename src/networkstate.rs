@@ -37,9 +37,18 @@ pub struct Networking{
     #[allow(dead_code)]
     ui_root: Option<Entity>,
     button_start: Option<Entity>,
+    button_host: Option<Entity>,
+    button_client: Option<Entity>,
+    button_hsend: Option<Entity>,
+    button_csend: Option<Entity>,
 }
 
-const BUTTON_START: &str = "start";
+#[allow(dead_code)]
+const BUTTON_START: &str = "host";
+const BUTTON_HOST: &str = "host";
+const BUTTON_CLIENT: &str = "client";
+const BUTTON_HSEND: &str = "hsend";
+const BUTTON_CSEND: &str = "csend";
 
 impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Networking {
     #[allow(dead_code)]
@@ -82,12 +91,30 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Networking {
                     //log::info!("[Trans::Switch] Switching to CreditsScreen!");
                     //return Trans::Switch(Box::new(CreditsScreen::default()));
                 //}
-                if Some(target) == self.button_start {
+                if Some(target) == self.button_host {
                     //log::info!("[Trans::Switch] Switching to Game!");
                     //return Trans::Switch(Box::new(Game::default()));
                     println!("click start button");
+                    data.data.test();
                     return Trans::None;
                 }
+
+                if Some(target) == self.button_client {
+                    println!("click button_client button");
+                    return Trans::None;
+                }
+
+                if Some(target) == self.button_hsend {
+                    println!("click button_hsend button");
+                    return Trans::None;
+                }
+
+                if Some(target) == self.button_csend {
+                    println!("click button_csend button");
+                    return Trans::None;
+                }
+
+
                 //if Some(target) == self.button_load || Some(target) == self.button_options {
                     //log::info!("This Buttons functionality is not yet implemented!");
                 //}
@@ -120,9 +147,16 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Networking {
 
         let StateData { world, .. } = data;
         
-        if self.button_start.is_none() {
+        if self.button_host.is_none() 
+            || self.button_client.is_none() 
+            || self.button_hsend.is_none() 
+            || self.button_csend.is_none()         
+        {
             world.exec(|ui_finder: UiFinder<'_>| {
-                self.button_start = ui_finder.find(BUTTON_START);
+                self.button_host = ui_finder.find(BUTTON_HOST);
+                self.button_client = ui_finder.find(BUTTON_CLIENT);
+                self.button_hsend = ui_finder.find(BUTTON_HSEND);
+                self.button_csend = ui_finder.find(BUTTON_CSEND);
             });
         }
         

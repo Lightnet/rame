@@ -102,7 +102,7 @@ fn main() -> amethyst::Result<()> {
     let assets_dir = app_root.join("assets/");
     
     //let game_data = GameDataBuilder::default()
-    let game_data = CustomGameDataBuilder::default()
+    let mut game_data = CustomGameDataBuilder::default()
         //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
         // Add the transform bundle which handles tracking entity positions
         // a lot of other bundles/systems depend on this (without it being explicitly clear), so it
@@ -131,6 +131,8 @@ fn main() -> amethyst::Result<()> {
     // systems.
     //let mut game = Application::new(assets_dir, ExampleState, game_data)?;
     //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
+    game_data.test();
+
     let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
     //log::info!("Starting game!");
     game.run();
