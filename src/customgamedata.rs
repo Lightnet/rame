@@ -40,6 +40,7 @@ pub struct CustomGameData<'a, 'b> {
 
 impl<'a, 'b> CustomGameData<'a, 'b> {
     /// Update game data
+    #[allow(dead_code)]
     pub fn update(&mut self, world: &World, running: bool) {
         if running {
             if let Some(running) = &mut self.running {

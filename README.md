@@ -20,6 +20,9 @@
 cargo build // build applicaton
 cargo run // run applicaton
 cargo clean // delete folder target
+
+cargo build --example main_network //wip
+cargo run --example main_network //wip
 ```
 
 # Examples:

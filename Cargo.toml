@@ -38,3 +38,7 @@ path = "examples/main_server.rs"
 [[example]]
 name = "main_client"
 path = "examples/main_client.rs"
+
+[[example]]
+name = "main_network"
+path = "src/main_network.rs"

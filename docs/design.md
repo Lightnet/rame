@@ -7,9 +7,9 @@ There are many components to able to run a game or application to deal with the 
 
 # Components:
  * GameData (SimpleState) and GameDataBuilder ( GameDataBuilder )
- * GameState (SimpleState or ExampleState)
- * System component (run game conditions)
- * entity component (build entity component as well others)
+ * GameState (SimpleState or ExampleState)( game, menu, input )
+ * System component (run game conditions, input, loop)
+ * Entity component (build entity component as well others)
 
 # GameData and GameDataBuilder:
     This setup root of Game Data and Game Data Builder. As well build bundle setup.
