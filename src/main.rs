@@ -52,6 +52,12 @@ use crate::sandbox::Sandbox;
 #[allow(unused_imports)]
 use crate::customgamedata::*;
 
+mod pausestate;
+//use crate::pausestate::*;
+
+mod mainstate;
+use crate::mainstate::*;
+
 mod systems; // Import the module
 mod menu;
 mod util;
@@ -183,7 +189,7 @@ fn main() -> amethyst::Result<()> {
     // systems.
     //let mut game = Application::new(assets_dir, ExampleState, game_data)?;
     //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
-    let mut game = Application::new(assets_dir, Main, game_data)?;
+    let mut game = Application::new(assets_dir, MainState::default(), game_data)?;
     //log::info!("Starting game!");
     game.run();
     

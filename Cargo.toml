@@ -13,6 +13,7 @@ version = "0.15"
 features = ["vulkan"]
 
 [dependencies]
+log = { version = "0.4.8", features = ["serde"] }
 
 #[[example]]
 #name = "demo_window"
@@ -29,3 +30,11 @@ path = "examples/main_examplestate.rs"
 [[example]]
 name = "main_simple"
 path = "examples/main_simple.rs"
+
+[[example]]
+name = "main_server"
+path = "examples/main_server.rs"
+
+[[example]]
+name = "main_client"
+path = "examples/main_client.rs"

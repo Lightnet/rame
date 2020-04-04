@@ -6,10 +6,15 @@
 
 
 use std::marker::PhantomData;
-
+#[allow(unused_imports)]
 use amethyst::{
     input::{is_close_requested, is_key_down},
     prelude::*,
+    assets::{
+        Completion, Handle, Prefab, PrefabLoader, PrefabLoaderSystemDesc, ProgressCounter,
+        RonFormat,
+    },
+    ecs::prelude::Entity,
     //utils::application_root_dir,
     //core::transform::TransformBundle,
     //renderer::{
@@ -17,6 +22,7 @@ use amethyst::{
         //types::DefaultBackend,
         //RenderingBundle,
     //},
+    ui::{RenderUi, UiBundle, UiCreator, UiLoader, UiPrefab},
     ecs::{System, World, Dispatcher, DispatcherBuilder, WorldExt},
     error::Error,
     winit::VirtualKeyCode,
@@ -219,7 +225,8 @@ where
     }
 }
 
-pub struct Main;
+/*
+#[derive(Default)]
 pub struct Paused;
 
 impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
@@ -257,15 +264,41 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
         Trans::None
     }
 }
+*/
 
-impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
+//https://github.com/amethyst/evoli/blob/master/src/states/menu.rs
+//const MENU_ID: &str = "menu";
+
+/*
+#[derive(Default)]
+pub struct MainState {
+    progress: ProgressCounter,
+    paused_ui: Option<Handle<UiPrefab>>,
+    ui_root: Option<Entity>,
+}
+/*
+impl Default for MainState {
+    fn default() -> Self {
+        MainState {
+            paused_ui: None,
+            ui_root: None,
+        }
+    }
+}
+*/
+impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
 
     #[allow(dead_code)]
     fn on_start(&mut self,
-        #[allow(unused_variables)]
+        //#[allow(unused_variables)]
         data: StateData<CustomGameData>) 
     {
+        let world = data.world;
 
+        self.ui_root =
+            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/menu.ron", ())));
+        
+            
         println!("init main...");
         //initialise(data.world);
     }
@@ -299,6 +332,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Main {
         Trans::None
     }
 }
+*/
+
 
 /*
 fn main() -> amethyst::Result<()> {
