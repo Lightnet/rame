@@ -15,7 +15,7 @@ use amethyst::input::{InputHandler, StringBindings};
 
 // You'll have to mark PADDLE_HEIGHT as public in sandbox.rs
 //use crate::sandbox::{Player, ARENA_HEIGHT, PADDLE_HEIGHT};
-use crate::sandbox::{Player};
+use crate::components::{Player};
 
 //https://book.amethyst.rs/stable/input/handling_input.html
 #[derive(SystemDesc)]

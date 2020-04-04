@@ -37,30 +37,55 @@ use amethyst::{
     winit::VirtualKeyCode,
     DataDispose, DataInit,
 };
+//#[allow(unused_imports)]
+use amethyst::ui::{RenderUi, UiBundle};
+use amethyst::input::{InputBundle, StringBindings};
 //use amethyst::DataDispose;
 //use amethyst::core::SystemBundle;
 //use amethyst::core::ArcThreadPool;
-use amethyst::input::{InputBundle, StringBindings};
-#[allow(unused_imports)]
-use amethyst::ui::{RenderUi, UiBundle};
 
-mod sandbox;
-mod customgamedata;
+mod components; // struct components
+mod systems; // Import the module
+//mod menu;
+mod util; // menu remove root
+//mod sandbox;
+mod customgamedata; // custom game data
+//menu and other
+mod mainstate; //work in progress
+mod mainmenustate; //mainmenu
+mod pausestate; // pause menu
+mod settingsstate; //setting menu
+mod loadingstate; // loading assets work in progress
+mod networkstate; // setup network work in progress
+mod creditsstate; // credits menu
+mod optionsstate; // options menu
 
 #[allow(unused_imports)]
-use crate::sandbox::Sandbox;
+use crate::components::*;
+//#[allow(unused_imports)]
+//use crate::sandbox::Sandbox;
 #[allow(unused_imports)]
 use crate::customgamedata::*;
-
-mod pausestate;
+//#[allow(unused_imports)]
 //use crate::pausestate::*;
+#[allow(unused_imports)]
+use crate::loadingstate::*;
+#[allow(unused_imports)]
+use crate::networkstate::*;
 
-mod mainstate;
+
+#[allow(unused_imports)]
+use crate::mainmenustate::*;
+#[allow(unused_imports)]
 use crate::mainstate::*;
+#[allow(unused_imports)]
+use crate::settingsstate::*;
 
-mod systems; // Import the module
-mod menu;
-mod util;
+#[allow(unused_imports)]
+use crate::optionsstate::*;
+#[allow(unused_imports)]
+use crate::creditsstate::*;
+
 
 /*
 pub struct Main;
@@ -147,17 +172,12 @@ fn main() -> amethyst::Result<()> {
     let display_config_path = app_root.join("config/display.ron");
 
     let binding_path = app_root.join("config").join("bindings.ron");
-    #[allow(unused_variables)]
+    //#[allow(unused_variables)]
+    // user input
     let input_bundle = InputBundle::<StringBindings>::new()
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
     let assets_dir = app_root.join("assets/");
-
-
-    //let mut world = World::new();
-    //let game_data = GameDataBuilder::default();
-    //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
-    //game.run();
     
     //let game_data = GameDataBuilder::default()
     let game_data = CustomGameDataBuilder::default()
@@ -193,6 +213,5 @@ fn main() -> amethyst::Result<()> {
     //log::info!("Starting game!");
     game.run();
     
-
     Ok(())
 }

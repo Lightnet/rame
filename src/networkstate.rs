@@ -1,3 +1,11 @@
+/*
+    Project Name: Rame
+    Created by: Lightnet
+    License: MIT
+    Information: work in progress test.
+
+*/
+
 #[allow(unused_imports)]
 use amethyst::{
     assets::{
@@ -21,65 +29,44 @@ use amethyst::{
     DataDispose, DataInit,
 };
 
-//mod customgamedata;
 
 use crate::customgamedata::*;
-//use crate::pausestate::*;
-use crate::pausestate::Paused;
 
 #[derive(Default)]
-pub struct MainState {
-    #[allow(dead_code)]
-    progress: ProgressCounter,
-    #[allow(dead_code)]
-    paused_ui: Option<Handle<UiPrefab>>,
-    #[allow(dead_code)]
-    ui_root: Option<Entity>,
-}
+pub struct Networking;
 
-impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
-
+impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Networking {
     #[allow(dead_code)]
-    fn on_start(&mut self,
-        //#[allow(unused_variables)]
-        data: StateData<CustomGameData>) 
-    {
-        let world = data.world;
-
-        self.ui_root =
-            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/mainmenu.ron", ())));
-        
-            
-        println!("init main...");
-        //initialise(data.world);
+    fn on_start(&mut self, 
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+        println!("Networking menu");
+        //create_paused_ui(data.world);
     }
 
     fn handle_event(
         &mut self,
-        _: StateData<CustomGameData>,
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>,
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
-        
         if let StateEvent::Window(event) = &event {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
-                println!("quit");
                 Trans::Quit
             } else if is_key_down(&event, VirtualKeyCode::Space) {
-                println!("Paused");
-                Trans::Push(Box::new(Paused))
+                //delete_paused_ui(data.world);
+                println!("return");
+                Trans::Pop
             } else {
-                //println!("...");
                 Trans::None
             }
         } else {
             Trans::None
         }
-        
-        //Trans::None
     }
 
     fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
-        data.data.update(&data.world, true); // true to say we should dispatch running
+        data.data.update(&data.world, false); // false to say we should not dispatch running
         Trans::None
     }
 }

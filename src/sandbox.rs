@@ -5,6 +5,7 @@
     Information: work in progress test.
 
 */
+
 #[allow(unused_imports)]
 use amethyst::{
   	assets::{AssetStorage, Loader, Handle},
@@ -93,7 +94,7 @@ fn initialise_camera(world: &mut World) {
 		.with(transform)
 		.build();
 }
-
+/*
 #[derive(PartialEq, Eq)]
 pub enum Side {
     Left,
@@ -129,6 +130,7 @@ impl Player {
 impl Component for Player {
 	type Storage = DenseVecStorage<Self>;
 }
+*/
 
 /// Initialises one player
 //fn initialise_player(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {

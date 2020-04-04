@@ -25,10 +25,10 @@ use amethyst::{
 
 use crate::customgamedata::*;
 //use crate::pausestate::*;
-use crate::pausestate::Paused;
+//use crate::pausestate::Paused;
 
 #[derive(Default)]
-pub struct MainState {
+pub struct MainMenuState {
     #[allow(dead_code)]
     progress: ProgressCounter,
     #[allow(dead_code)]
@@ -37,7 +37,7 @@ pub struct MainState {
     ui_root: Option<Entity>,
 }
 
-impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
+impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainMenuState {
 
     #[allow(dead_code)]
     fn on_start(&mut self,
@@ -66,7 +66,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
                 Trans::Quit
             } else if is_key_down(&event, VirtualKeyCode::Space) {
                 println!("Paused");
-                Trans::Push(Box::new(Paused))
+                //Trans::Push(Box::new(Paused))
+                Trans::None
             } else {
                 //println!("...");
                 Trans::None
