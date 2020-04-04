@@ -27,7 +27,6 @@ use amethyst::DataDispose;
 use amethyst::core::SystemBundle;
 use amethyst::core::ArcThreadPool;
 
-
 pub struct CustomGameData<'a, 'b> {
     pub base: Option<Dispatcher<'a, 'b>>,
     pub running: Option<Dispatcher<'a, 'b>>,
