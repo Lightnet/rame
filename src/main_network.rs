@@ -18,7 +18,14 @@
 //#[allow(unused_imports)]
 // #[allow(clippy::type_complexity, dead_code)]
 //#[allow(dead_code)]
+extern crate clap;
 extern crate amethyst;
+
+//use clap::{Arg, App, SubCommand};
+use clap::{Arg, App};
+//use clap::App;
+
+//use std::env;
 
 #[allow(unused_imports)]
 use amethyst::{
@@ -91,7 +98,7 @@ fn main() -> amethyst::Result<()> {
     // this will be the directory the 'Cargo.toml' is defined in.
     let app_root = application_root_dir()?;
     // our display config is in our configs folder.
-    let display_config_path = app_root.join("config/display.ron");
+    let display_config_path = app_root.join("config\\display.ron");
 
     let binding_path = app_root.join("config").join("bindings.ron");
     //#[allow(unused_variables)]
@@ -99,7 +106,7 @@ fn main() -> amethyst::Result<()> {
     let input_bundle = InputBundle::<StringBindings>::new()
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
-    let assets_dir = app_root.join("assets/");
+    let assets_dir = app_root.join("assets");
     
     //let game_data = GameDataBuilder::default()
     let mut game_data = CustomGameDataBuilder::default()
@@ -132,7 +139,57 @@ fn main() -> amethyst::Result<()> {
     //let mut game = Application::new(assets_dir, ExampleState, game_data)?;
     //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
     game_data.test();
+    //let args: Vec<String> = env::args().collect();
 
+    
+    let matches = App::new("RAME Program")
+        .version("1.0")
+        .author("Lightnet <>")
+        .about("Does awesome things")
+        .arg(
+            Arg::with_name("server")
+                .long("server")
+                .help("Sets an optional output file")
+                .takes_value(true)
+                .multiple(true),
+        )
+        .arg(
+            Arg::with_name("client")
+                .long("client")
+                .help("Sets an optional output file")
+                .takes_value(true)
+                .multiple(true),
+        )
+        .get_matches();
+        
+        
+    let mut isnetwork: bool = false;
+    let mut isserver: bool = false;
+    // You can check the value provided by positional arguments, or option arguments
+    if let Some(o) = matches.value_of("server") {
+        println!("[server] Value for output: {}", o);
+        isnetwork = true;
+        isserver = true;
+    }
+
+    if let Some(o) = matches.value_of("client") {
+        println!("[client] Value for output: {}", o);
+        isnetwork = true;
+    }
+
+    if isnetwork {
+        println!("server network test...");
+    }
+
+    // You can check the value provided by positional arguments, or option arguments
+    //if let Some(o) = matches.value_of("server") {
+        //println!("Value for server: {}", o);
+    //}
+
+    //if true{
+        //println!("server");
+    //}
+    
     let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
     //log::info!("Starting game!");
     game.run();

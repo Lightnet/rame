@@ -32,10 +32,20 @@ cargo run --example main_examplestate // working
 cargo run --example main_simple // working
 ```
 
+```powershell
+
+cargo build --example main_network
+
+& "target\debug\examples\main_network" --server "128.0.0.1:8080"
+```
+# Notes:
+ * network code might be tricky to setup with command line
+
 # Links:
  * https://github.com/amethyst/amethyst
  * https://github.com/amethyst/amethyst/tree/master/examples/custom_game_data
  * https://book.amethyst.rs/stable/controlling_system_execution/custom_game_data.html
  * https://github.com/Gekkio/imgui-rs
  * https://github.com/amethyst/amethyst/blob/master/examples/states_ui/menu.rs
+ * https://github.com/clap-rs/clap/tree/master/examples
  * 

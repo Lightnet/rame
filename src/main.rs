@@ -169,7 +169,7 @@ fn main() -> amethyst::Result<()> {
     // this will be the directory the 'Cargo.toml' is defined in.
     let app_root = application_root_dir()?;
     // our display config is in our configs folder.
-    let display_config_path = app_root.join("config/display.ron");
+    let display_config_path = app_root.join("config\\display.ron");
 
     let binding_path = app_root.join("config").join("bindings.ron");
     //#[allow(unused_variables)]
@@ -177,7 +177,7 @@ fn main() -> amethyst::Result<()> {
     let input_bundle = InputBundle::<StringBindings>::new()
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
-    let assets_dir = app_root.join("assets/");
+    let assets_dir = app_root.join("assets");
     
     //let game_data = GameDataBuilder::default()
     let game_data = CustomGameDataBuilder::default()
