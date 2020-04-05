@@ -33,7 +33,7 @@ let game_data = CustomGameDataBuilder::default()
 # System component:
     This handle loops such user input, game condtion for win or lose, physics, and other thing that does update.
 
-# entity component:
+# Entity component:
     This is enity such as stuct, player data.
 
 # Notes:

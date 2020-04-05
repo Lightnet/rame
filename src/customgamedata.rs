@@ -101,7 +101,7 @@ impl<'a, 'b> CustomGameDataBuilder<'a, 'b> {
             running_dispatcher_operations: vec![],
         }
     }
-
+    #[allow(dead_code)]
     pub fn test(&mut self){
         println!("test CustomGameDataBuilder");
     }

@@ -26,7 +26,7 @@ use clap::{Arg, App};
 //use clap::App;
 
 //use std::env;
-use std::time::Duration;
+//use std::time::Duration;
 
 #[allow(unused_imports)]
 use amethyst::{
@@ -111,19 +111,22 @@ fn main() -> amethyst::Result<()> {
         .arg(
             Arg::with_name("server")
                 .long("server")
-                .help("Sets an optional output file")
+                .help("Sets an server address")
                 .takes_value(true)
                 .multiple(true),
         )
         .arg(
             Arg::with_name("client")
                 .long("client")
-                .help("Sets an optional output file")
+                .help("Sets an client address")
                 .takes_value(true)
                 .multiple(true),
         )
         .get_matches();
+    //#[allow(unused_variables)]
+    #[allow(unused_assignments)]
     let mut isnetwork: bool = false;
+    #[allow(unused_variables)]
     let mut isserver: bool = false;
 
     // this will be the directory the 'Cargo.toml' is defined in.
@@ -138,43 +141,45 @@ fn main() -> amethyst::Result<()> {
     .with_bindings_from_file(binding_path)?;
     // other assets ('*.ron' files, '*.png' textures, '*.ogg' audio files, ui prefab files, ...) are here
     let assets_dir = app_root.join("assets");
+
+    //let game_data = GameDataBuilder::default()
+    let mut game_data = CustomGameDataBuilder::default()
+    //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
+    // Add the transform bundle which handles tracking entity positions
+    // a lot of other bundles/systems depend on this (without it being explicitly clear), so it
+    // makes sense to add it early on
+    .with_base_bundle(TransformBundle::new())
+    .with_base_bundle(input_bundle)
+    .with_base(systems::ControllerSystem, "controller_system", &["input_system"])
+    // this bundle allows us to 'find' the Buttons and other UI elements later on
+    .with_base_bundle(UiBundle::<StringBindings>::new())
+    // this allows us to reload '*.ron' files during execution
+    .with_base_bundle(HotReloadBundle::default())
+    // without this Bundle, our Program will silently (!) fail when trying to start the 'Game'.
+    .with_base_bundle(
+        RenderingBundle::<DefaultBackend>::new()
+        // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
+        .with_plugin(
+            RenderToWindow::from_config_path(&display_config_path)?
+                .with_clear([0.34, 0.36, 0.52, 1.0]),
+        )
+        // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
+        .with_plugin(RenderFlat2D::default())
+        .with_plugin(RenderUi::default()),
+    );
     
     if let Some(o) = matches.value_of("server") {
-
         println!("[server] Value for output: {}", o);
-        //isnetwork = true;
-        //isserver = true;
+        //#[allow(unused_assignments)]
+        //#[allow(dead_code)]
+        isnetwork = true;
+        isserver = true;
 
         let listener = TcpListener::bind("0.0.0.0:3457")?;
         listener.set_nonblocking(true)?;
 
-        //let game_data = GameDataBuilder::default()
-        let mut game_data = CustomGameDataBuilder::default()
-            //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
-            // Add the transform bundle which handles tracking entity positions
-            // a lot of other bundles/systems depend on this (without it being explicitly clear), so it
-            // makes sense to add it early on
-            .with_base_bundle(TransformBundle::new())
-            .with_base_bundle(input_bundle)
-            .with_base(systems::ControllerSystem, "controller_system", &["input_system"])
-            // this bundle allows us to 'find' the Buttons and other UI elements later on
-            .with_base_bundle(UiBundle::<StringBindings>::new())
-            // this allows us to reload '*.ron' files during execution
-            .with_base_bundle(HotReloadBundle::default())
-            // without this Bundle, our Program will silently (!) fail when trying to start the 'Game'.
-            .with_base_bundle(
-                RenderingBundle::<DefaultBackend>::new()
-                // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
-                .with_plugin(
-                    RenderToWindow::from_config_path(&display_config_path)?
-                        .with_clear([0.34, 0.36, 0.52, 1.0]),
-                )
-                // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
-                .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderUi::default()),
-            )
-            .with_base_bundle(TcpNetworkBundle::new(Some(listener), 2048))
-            .with_base_bundle(ServerReceiveBundle);
+        game_data=game_data.with_base_bundle(TcpNetworkBundle::new(Some(listener), 2048));
+        game_data=game_data.with_base_bundle(ServerNetworkReceiveBundle);
 
         let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
         //log::info!("Starting game!");
@@ -182,65 +187,17 @@ fn main() -> amethyst::Result<()> {
         game.run();
              
     }else if let Some(o) = matches.value_of("client") {
-
-        let mut game_data = CustomGameDataBuilder::default()
-            //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
-            // Add the transform bundle which handles tracking entity positions
-            // a lot of other bundles/systems depend on this (without it being explicitly clear), so it
-            // makes sense to add it early on
-            .with_base_bundle(TransformBundle::new())
-            .with_base_bundle(input_bundle)
-            .with_base(systems::ControllerSystem, "controller_system", &["input_system"])
-            // this bundle allows us to 'find' the Buttons and other UI elements later on
-            .with_base_bundle(UiBundle::<StringBindings>::new())
-            // this allows us to reload '*.ron' files during execution
-            .with_base_bundle(HotReloadBundle::default())
-            // without this Bundle, our Program will silently (!) fail when trying to start the 'Game'.
-            .with_base_bundle(
-                RenderingBundle::<DefaultBackend>::new()
-                // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
-                .with_plugin(
-                    RenderToWindow::from_config_path(&display_config_path)?
-                        .with_clear([0.34, 0.36, 0.52, 1.0]),
-                )
-                // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
-                .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderUi::default()),
-            )
-            .with_base_bundle(TcpNetworkBundle::new(None, 2048))
-            .with_base_bundle(ClientBundle);
-            let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
-            //log::info!("Starting game!");
-            println!("client network...");
-            game.run();
+        println!("[Client] Value for output: {}", o);
+        isnetwork = true;
+        isserver = false;
+        game_data=game_data.with_base_bundle(TcpNetworkBundle::new(None, 2048));
+        game_data=game_data.with_base_bundle(ClientNetworkBundle);
+        let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
+        //log::info!("Starting game!");
+        println!("client network...");
+        game.run();
         
     }else{
-        //let game_data = GameDataBuilder::default()
-        let mut game_data = CustomGameDataBuilder::default()
-            //.with_bundle(WindowBundle::from_config_path(&display_config_path)?)?
-            // Add the transform bundle which handles tracking entity positions
-            // a lot of other bundles/systems depend on this (without it being explicitly clear), so it
-            // makes sense to add it early on
-            .with_base_bundle(TransformBundle::new())
-            .with_base_bundle(input_bundle)
-            .with_base(systems::ControllerSystem, "controller_system", &["input_system"])
-            // this bundle allows us to 'find' the Buttons and other UI elements later on
-            .with_base_bundle(UiBundle::<StringBindings>::new())
-            // this allows us to reload '*.ron' files during execution
-            .with_base_bundle(HotReloadBundle::default())
-            // without this Bundle, our Program will silently (!) fail when trying to start the 'Game'.
-            .with_base_bundle(
-                RenderingBundle::<DefaultBackend>::new()
-                // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
-                .with_plugin(
-                    RenderToWindow::from_config_path(&display_config_path)?
-                        .with_clear([0.34, 0.36, 0.52, 1.0]),
-                )
-                // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
-                .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderUi::default()),
-            );
-
         println!("no network...");
         let mut game = Application::new(assets_dir, Networking::default(), game_data)?;
         //log::info!("Starting game!");
@@ -258,13 +215,13 @@ fn main() -> amethyst::Result<()> {
 // server start
 //===============================================
 #[derive(Debug)]
-struct ServerReceiveBundle;
+struct ServerNetworkReceiveBundle;
 
-impl<'a, 'b> SystemBundle<'a, 'b> for ServerReceiveBundle {
+impl<'a, 'b> SystemBundle<'a, 'b> for ServerNetworkReceiveBundle {
     fn build(self, world: &mut World, builder: &mut DispatcherBuilder<'a, 'b>) -> Result<()> {
         println!("server init...");
         builder.add(
-            ServerReceiveSystemDesc::default().build(world),
+            ServerNetworkReceiveSystemDesc::default().build(world),
             "receiving_system",
             &[],
         );
@@ -273,34 +230,34 @@ impl<'a, 'b> SystemBundle<'a, 'b> for ServerReceiveBundle {
 }
 
 #[derive(Default, Debug)]
-pub struct ServerReceiveSystemDesc;
+pub struct ServerNetworkReceiveSystemDesc;
 
-impl<'a, 'b> SystemDesc<'a, 'b, ServerReceiveSystem> for ServerReceiveSystemDesc {
-    fn build(self, world: &mut World) -> ServerReceiveSystem {
+impl<'a, 'b> SystemDesc<'a, 'b, ServerNetworkReceiveSystem> for ServerNetworkReceiveSystemDesc {
+    fn build(self, world: &mut World) -> ServerNetworkReceiveSystem {
         // Creates the EventChannel<NetworkEvent> managed by the ECS.
-        <ServerReceiveSystem as System<'_>>::SystemData::setup(world);
+        <ServerNetworkReceiveSystem as System<'_>>::SystemData::setup(world);
         // Fetch the change we just created and call `register_reader` to get a
         // ReaderId<NetworkEvent>. This reader id is used to fetch new events from the network event
         // channel.
         let reader = world
             .fetch_mut::<EventChannel<NetworkSimulationEvent>>()
             .register_reader();
-            ServerReceiveSystem::new(reader)
+            ServerNetworkReceiveSystem::new(reader)
     }
 }
 
 /// A simple system that receives a ton of network events.
-struct ServerReceiveSystem {
+struct ServerNetworkReceiveSystem {
     reader: ReaderId<NetworkSimulationEvent>,
 }
 
-impl ServerReceiveSystem {
+impl ServerNetworkReceiveSystem {
     pub fn new(reader: ReaderId<NetworkSimulationEvent>) -> Self {
         Self { reader }
     }
 }
 
-impl<'a> System<'a> for ServerReceiveSystem {
+impl<'a> System<'a> for ServerNetworkReceiveSystem {
     type SystemData = (
         Write<'a, TransportResource>,
         Read<'a, EventChannel<NetworkSimulationEvent>>,
@@ -336,22 +293,22 @@ impl<'a> System<'a> for ServerReceiveSystem {
 
 
 #[derive(Debug)]
-struct ClientBundle;
+struct ClientNetworkBundle;
 
-impl<'a, 'b> SystemBundle<'a, 'b> for ClientBundle {
+impl<'a, 'b> SystemBundle<'a, 'b> for ClientNetworkBundle {
     fn build(self, world: &mut World, builder: &mut DispatcherBuilder<'a, 'b>) -> Result<()> {
-        builder.add(ClientSystemDesc::default().build(world), "spam_system", &[]);
+        builder.add(ClientNetworkSystemDesc::default().build(world), "spam_system", &[]);
         Ok(())
     }
 }
 
 #[derive(Default, Debug)]
-pub struct ClientSystemDesc;
+pub struct ClientNetworkSystemDesc;
 
-impl<'a, 'b> SystemDesc<'a, 'b, ClientSystem> for ClientSystemDesc {
-    fn build(self, world: &mut World) -> ClientSystem {
+impl<'a, 'b> SystemDesc<'a, 'b, ClientNetworkSystem> for ClientNetworkSystemDesc {
+    fn build(self, world: &mut World) -> ClientNetworkSystem {
         // Creates the EventChannel<NetworkEvent> managed by the ECS.
-        <ClientSystem as System<'_>>::SystemData::setup(world);
+        <ClientNetworkSystem as System<'_>>::SystemData::setup(world);
         // Fetch the change we just created and call `register_reader` to get a
         // ReaderId<NetworkEvent>. This reader id is used to fetch new events from the network event
         // channel.
@@ -359,22 +316,22 @@ impl<'a, 'b> SystemDesc<'a, 'b, ClientSystem> for ClientSystemDesc {
             .fetch_mut::<EventChannel<NetworkSimulationEvent>>()
             .register_reader();
 
-            ClientSystem::new(reader)
+            ClientNetworkSystem::new(reader)
     }
 }
 
 /// A simple system that receives a ton of network events.
-struct ClientSystem {
+struct ClientNetworkSystem {
     reader: ReaderId<NetworkSimulationEvent>,
 }
 
-impl ClientSystem {
+impl ClientNetworkSystem {
     pub fn new(reader: ReaderId<NetworkSimulationEvent>) -> Self {
         Self { reader }
     }
 }
 
-impl<'a> System<'a> for ClientSystem {
+impl<'a> System<'a> for ClientNetworkSystem {
     type SystemData = (
         Read<'a, NetworkSimulationTime>,
         Read<'a, Time>,

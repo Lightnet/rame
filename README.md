@@ -1,13 +1,17 @@
 # rame
+```
  Rust
  Amethyst
  Module
  Engine
+```
+# Created By: Lightnet
 
 # License: MIT
 
-# required:
+# Required:
  * install rust lang
+ * Amethyst 0.15
  
 # Information:
 	Work in progress. Just a prototype test. To create a simple game mode with creatitve, rpg and other game type to keep thing simple.
@@ -26,7 +30,7 @@ cargo run --example main_network //wip
 ```
 
 # Examples:
-```
+```powershell
 cargo run --example main_customgamedata // working
 cargo run --example main_examplestate // working
 cargo run --example main_simple // working
@@ -37,15 +41,18 @@ cargo run --example main_simple // working
 cargo build --example main_network
 
 & "target\debug\examples\main_network" --server "128.0.0.1:8080"
+
+& "target\debug\examples\main_network" --client "128.0.0.1:8080"
 ```
 # Notes:
  * network code might be tricky to setup with command line
 
 # Links:
  * https://github.com/amethyst/amethyst
- * https://github.com/amethyst/amethyst/tree/master/examples/custom_game_data
- * https://book.amethyst.rs/stable/controlling_system_execution/custom_game_data.html
- * https://github.com/Gekkio/imgui-rs
- * https://github.com/amethyst/amethyst/blob/master/examples/states_ui/menu.rs
- * https://github.com/clap-rs/clap/tree/master/examples
+ * https://github.com/amethyst/amethyst/tree/master/examples/custom_game_data customgamedata
+ * https://github.com/amethyst/amethyst/blob/master/examples/states_ui/menu.rs menu ui
+ * https://github.com/amethyst/shred Dispatcher and System types
+ * https://book.amethyst.rs/stable/controlling_system_execution/custom_game_data.html customgamedata
+ * https://github.com/Gekkio/imgui-rs imgui
+ * https://github.com/clap-rs/clap/tree/master/examples comand line args
  * 
