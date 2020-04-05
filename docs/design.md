@@ -67,4 +67,10 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for ExampleState {
     }
 
 }
- ```
+```
+
+```rust
+let display_config_path = app_root.join("config\\display.ron");
+```
+# Note:
+ * path string be "\\" not "//" when release or debug stand alone test.
