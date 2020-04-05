@@ -83,4 +83,13 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainMenuState {
         data.data.update(&data.world, true); // true to say we should dispatch running
         Trans::None
     }
+
+    fn on_stop(&mut self, 
+        //#[allow(dead_code)]
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+
+            
+    }
+
 }

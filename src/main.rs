@@ -48,7 +48,7 @@ mod components; // struct components
 mod systems; // Import the module
 //mod menu;
 mod util; // menu remove root
-//mod sandbox;
+mod sandbox;
 mod customgamedata; // custom game data
 //menu and other
 mod mainstate; //work in progress
@@ -63,7 +63,7 @@ mod optionsstate; // options menu
 #[allow(unused_imports)]
 use crate::components::*;
 //#[allow(unused_imports)]
-//use crate::sandbox::Sandbox;
+use crate::sandbox::*;
 #[allow(unused_imports)]
 use crate::customgamedata::*;
 //#[allow(unused_imports)]
@@ -208,8 +208,15 @@ fn main() -> amethyst::Result<()> {
     // creating the Application with the assets_dir, the first Screen, and the game_data with it's
     // systems.
     //let mut game = Application::new(assets_dir, ExampleState, game_data)?;
-    //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?;
-    let mut game = Application::new(assets_dir, MainState::default(), game_data)?;
+    //let mut game = Application::new(assets_dir, Sandbox::default(), game_data)?; //not change customgamedata yet
+    //let mut game = Application::new(assets_dir, MainState::default(), game_data)?;
+    let mut game = Application::new(assets_dir,
+        //Loading::default()
+        //Sandbox::default()
+        MainState::default()
+
+        ,game_data)?;
+
     //log::info!("Starting game!");
     game.run();
     

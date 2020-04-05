@@ -60,4 +60,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Paused {
         data.data.update(&data.world, false); // false to say we should not dispatch running
         Trans::None
     }
+
+    fn on_stop(&mut self, 
+        //#[allow(dead_code)]
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+
+    }
 }

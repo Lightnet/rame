@@ -69,4 +69,19 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Settings {
         data.data.update(&data.world, false); // false to say we should not dispatch running
         Trans::None
     }
+
+    fn on_stop(&mut self, 
+        //#[allow(dead_code)]
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+        // after destroying the current UI, invalidate references as well (makes things cleaner)
+        //if let Some(entity) = self.ui_root {
+            //delete_hierarchy(entity, data.world).expect("Failed to remove MainMenu");
+        //}
+        //self.ui_root = None;
+        //self.button_start = None;
+        //self.button_load = None;
+        //self.button_options = None;
+        //self.button_credits = None;
+    }
 }

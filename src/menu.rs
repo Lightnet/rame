@@ -6,8 +6,6 @@
 
 */
 
-
-
 use amethyst::{
   ecs::prelude::Entity,
   //input::{is_close_requested, is_key_down},

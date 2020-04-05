@@ -4,7 +4,7 @@
 */
 
 (
-  title: "Windowing example",
+  title: "Project rame",
   icon: Some("assets/logo.png"),
   dimensions: Some((800, 600)),
 )

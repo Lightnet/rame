@@ -46,9 +46,12 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
     {
         let world = data.world;
 
+        let menuname: &str = "ui/fps.ron";
+        //menuname = "ui/loading.ron";
+
         self.ui_root =
             //Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/mainmenu.ron", ())));
-            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/menunetwork.ron", ())));
+            Some(world.exec(|mut creator: UiCreator<'_>| creator.create(menuname, ())));
         
             
         println!("init main...");
@@ -83,4 +86,13 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for MainState {
         data.data.update(&data.world, true); // true to say we should dispatch running
         Trans::None
     }
+
+    fn on_stop(&mut self, 
+        //#[allow(dead_code)]
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+
+            
+    }
+
 }

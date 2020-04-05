@@ -28,6 +28,9 @@ pub const ARENA_WIDTH: f32 = 600.0;
 pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
+use crate::customgamedata::*;
+use crate::components::*;
+
 #[derive(Default)]
 pub struct Sandbox {
     #[allow(dead_code)]
@@ -37,10 +40,12 @@ pub struct Sandbox {
     ui_handle: Option<Entity>,
 }
 
-impl SimpleState for Sandbox {
+impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Sandbox {
   	// #![allow(dead_code)]
-	fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>) {
-        let world = _data.world;
+	fn on_start(&mut self, 
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>) {
+        let world = data.world;
         
         self.ui_handle =
             Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/welcome.ron", ())));
@@ -50,7 +55,11 @@ impl SimpleState for Sandbox {
         
     }
     
-    fn handle_event(&mut self, _: StateData<'_, GameData<'_, '_>>, event: StateEvent,) -> SimpleTrans {
+    fn handle_event(&mut self,
+        #[allow(unused_variables)]
+        data: StateData<CustomGameData>,
+        event: StateEvent,
+    ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
         match &event {
             StateEvent::Window(event) => {
                 if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
@@ -58,8 +67,8 @@ impl SimpleState for Sandbox {
                     Trans::Quit
                 } else if is_mouse_button_down(&event, MouseButton::Left) {
                     //log::info!("[Trans::Switch] Switching to MainMenu!");
-                    Trans::Switch(Box::new(crate::menu::MainMenu::default()))
-                    //Trans::None
+                    //Trans::Switch(Box::new(crate::menu::MainMenu::default()))
+                    Trans::None
                 } else {
                     Trans::None
                 }
@@ -69,13 +78,16 @@ impl SimpleState for Sandbox {
     }
 
   	// #![allow(dead_code)]
-	fn update(&mut self, _data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
-		let _time = _data.world.fetch::<Time>();
+	fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+		let _time = data.world.fetch::<Time>();
 
+        data.data.update(&data.world, false); // false to say we should not dispatch running
   		Trans::None
     }
     
-    fn on_stop(&mut self, data: StateData<GameData>) {
+    fn on_stop(&mut self, 
+        #[allow(dead_code)]
+        data: StateData<CustomGameData>) {
         if let Some(handler) = self.ui_handle {
             delete_hierarchy(handler, data.world).expect("Failed to remove WelcomeScreen");
         }

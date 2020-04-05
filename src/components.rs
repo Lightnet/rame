@@ -47,7 +47,7 @@ pub struct Player {
 
 impl Player {
 	#[allow(dead_code)]
-    fn new(side: Side) -> Player {
+    pub fn new(side: Side) -> Player {
         Player {
             id: 0,
             side,

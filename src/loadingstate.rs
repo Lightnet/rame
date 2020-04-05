@@ -29,19 +29,30 @@ use amethyst::{
     DataDispose, DataInit,
 };
 
-
 use crate::customgamedata::*;
 
 #[derive(Default)]
-pub struct Loading;
+pub struct Loading{
+    #[allow(dead_code)]
+    progress: ProgressCounter,
+    #[allow(dead_code)]
+    ui_root: Option<Entity>,
+}
 
 impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Loading {
     #[allow(dead_code)]
     fn on_start(&mut self, 
         #[allow(unused_variables)]
         data: StateData<CustomGameData>) {
+
         println!("Loading menu");
-        //create_paused_ui(data.world);
+        let world = data.world;
+
+        let menuname: &str = "ui/loading.ron";
+
+        self.ui_root =
+            Some(world.exec(|mut creator: UiCreator<'_>| creator.create(menuname, ())));
+
     }
 
     fn handle_event(
@@ -50,6 +61,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Loading {
         data: StateData<CustomGameData>,
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
+
         if let StateEvent::Window(event) = &event {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
                 Trans::Quit
@@ -63,10 +75,30 @@ impl<'a, 'b> State<CustomGameData<'a, 'b>, StateEvent> for Loading {
         } else {
             Trans::None
         }
+
     }
 
     fn update(&mut self, data: StateData<CustomGameData>) -> Trans<CustomGameData<'a, 'b>, StateEvent> {
         data.data.update(&data.world, false); // false to say we should not dispatch running
         Trans::None
     }
+
+    #[allow(dead_code)]
+    fn on_stop(&mut self, 
+        #[allow(dead_code)]
+        data: StateData<CustomGameData>) {
+        // after destroying the current UI, invalidate references as well (makes things cleaner)
+        if let Some(root_entity) = self.ui_root {
+            data.world
+                .delete_entity(root_entity)
+                .expect("Failed to remove Menu UI");
+        }
+
+        self.ui_root = None;
+        //self.progress = None;
+        //self.button_start = None;
+    }
+
+
+
 }
